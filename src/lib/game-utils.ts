@@ -32,88 +32,74 @@ export const countPlayerPoints = (grid: Grid, player: number): number => {
 };
 
 export const detectEnclosures = (
-  grid: Grid,
-  lastX: number,
-  lastY: number,
-  currentPlayer: number
-): { newGrid: Grid; enclosuresFound: boolean } => {
-  // Implementation from original code
-  const size = grid.length;
-  const newGrid = getGridCopy(grid);
-  let enclosuresFound = false;
-
-  // Helper function to check if a point is within bounds
-  const isValid = (x: number, y: number) =>
-    x >= 0 && x < size && y >= 0 && y < size;
-
-  // Helper function to perform a flood fill
-  const floodFill = (
-    x: number,
-    y: number,
-    targetPlayer: number,
-    fillValue: number,
-    visited: boolean[][]
-  ): boolean => {
-    if (
-      !isValid(x, y) ||
-      visited[y][x] ||
-      newGrid[y][x].owner !== targetPlayer
-    ) {
-      return false;
-    }
-    if (newGrid[y][x].sealed) return false;
-
-    visited[y][x] = true;
-
-    // Check neighbors
-    const neighbors = [
-      { dx: 0, dy: 1 },
-      { dx: 0, dy: -1 },
-      { dx: 1, dy: 0 },
-      { dx: -1, dy: 0 },
-    ];
-
-    let isEnclosed = true;
-    for (const neighbor of neighbors) {
-      const nx = x + neighbor.dx;
-      const ny = y + neighbor.dy;
-      if (!isValid(nx, ny)) {
-        isEnclosed = false; // Touches the edge, not enclosed
-      } else if (newGrid[ny][nx].owner === 0) {
-        isEnclosed = false; // Empty neighbor, not enclosed
-      } else if (
-        newGrid[ny][nx].owner !== targetPlayer &&
-        !newGrid[ny][nx].sealed
-      ) {
-        //Opponent neighbor.
-        continue;
-      } else if (!visited[ny][nx]) {
-        isEnclosed =
-          isEnclosed && floodFill(nx, ny, targetPlayer, fillValue, visited);
+    grid: Grid,
+    currentPlayer: number
+  ): { newGrid: Grid; enclosuresFound: boolean } => {
+    const size = grid.length;
+    const newGrid = getGridCopy(grid);
+    let enclosuresFound = false;
+  
+    // 1. Create visited matrix and queue for BFS
+    const visited = Array.from({ length: size }, () => 
+      new Array(size).fill(false));
+    const queue: [number, number][] = [];
+  
+    // 2. Initialize BFS from all edge cells
+    const edgeCells = getEdgeCells(size);
+    for (const [x, y] of edgeCells) {
+      if (shouldVisit(newGrid, x, y, currentPlayer)) {
+        visited[y][x] = true;
+        queue.push([x, y]);
       }
     }
-    return isEnclosed;
-  };
-
-  // Check for enclosure around the last played point
-  const visited = Array(size)
-    .fill(null)
-    .map(() => Array(size).fill(false));
-  if (floodFill(lastX, lastY, currentPlayer, 3, visited)) {
-    // Use 3 as a temporary fill value
-    enclosuresFound = true;
-    // Mark enclosed area as sealed and count opponent points.
-    for (let y = 0; y < size; y++) {
-      for (let x = 0; x < size; x++) {
-        if (visited[y][x]) {
-          newGrid[y][x].sealed = true;
+  
+    // 3. Perform BFS to find all reachable areas from edges
+    const directions = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+    while (queue.length > 0) {
+      const [x, y] = queue.shift()!;
+      
+      for (const [dx, dy] of directions) {
+        const nx = x + dx;
+        const ny = y + dy;
+        
+        if (isValid(nx, ny, size) && 
+            !visited[ny][nx] && 
+            shouldVisit(newGrid, nx, ny, currentPlayer)) {
+          visited[ny][nx] = true;
+          queue.push([nx, ny]);
         }
       }
     }
-  }
-
-  return { newGrid, enclosuresFound };
-};
+  
+    // 4. Seal unreachable areas and count enclosures
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        if (!visited[y][x] && 
+            newGrid[y][x].owner !== currentPlayer && 
+            !newGrid[y][x].sealed) {
+          newGrid[y][x].sealed = true;
+          enclosuresFound = true;
+        }
+      }
+    }
+  
+    return { newGrid, enclosuresFound };
+  };
+  
+  // Helper functions
+  const isValid = (x: number, y: number, size: number) => 
+    x >= 0 && x < size && y >= 0 && y < size;
+  
+  const shouldVisit = (grid: Grid, x: number, y: number, currentPlayer: number) => 
+    grid[y][x].owner !== currentPlayer && !grid[y][x].sealed;
+  
+  const getEdgeCells = (size: number): [number, number][] => {
+    const cells: [number, number][] = [];
+    for (let i = 0; i < size; i++) {
+      cells.push([0, i], [size-1, i], [i, 0], [i, size-1]);
+    }
+    return cells;
+  };
 
 export const calculateScores = (grid: Grid, player: number) => {
   // Implementation from original code

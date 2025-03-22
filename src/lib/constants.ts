@@ -24,3 +24,9 @@ export const WIN_MESSAGES = {
 // Animation constants
 export const RESET_DELAY = 300; // In milliseconds
 export const MESSAGE_ANIMATION_DURATION = 0.3; // In seconds
+
+//Design colors
+const RED = '#fc2929'
+const PURPLE = '#c952Ee4'
+const LIGHT_PURPLE = '#ffe7fe'
+const DARK_YELLOW = '#debf11'

@@ -25,26 +25,24 @@ const EnclosureGame = () => {
 
   const [isResetting, setIsResetting] = useState(false);
 
+  // Update the detectEnclosures call in handleCellClick
   const handleCellClick = useCallback(
     (x: number, y: number) => {
-      // Optimized game logic implementation
       if (gameState.gameOver) return;
 
       const { grid, currentPlayer } = gameState;
-      if (grid[y][x].owner !== 0) {
-        return; // Cell already taken
-      }
+      if (grid[y][x].owner !== 0) return;
 
       let newGrid = getGridCopy(grid);
       newGrid[y][x].owner = currentPlayer;
 
+      // Updated detection call (remove x/y parameters)
       const { newGrid: updatedGrid, enclosuresFound } = detectEnclosures(
         newGrid,
-        x,
-        y,
         currentPlayer
       );
 
+      // Rest of the logic remains the same
       let newScores = [...gameState.scores];
       if (enclosuresFound) {
         newScores[currentPlayer - 1] = calculateScores(
@@ -63,13 +61,12 @@ const EnclosureGame = () => {
       if (gameOver) {
         const player1Points = countPlayerPoints(updatedGrid, 1);
         const player2Points = countPlayerPoints(updatedGrid, 2);
-        if (player1Points > player2Points) {
-          message = "Player 1 Wins!";
-        } else if (player2Points > player1Points) {
-          message = "Player 2 Wins!";
-        } else {
-          message = "It's a Tie!";
-        }
+        message =
+          player1Points > player2Points
+            ? "Player 1 Wins!"
+            : player2Points > player1Points
+            ? "Player 2 Wins!"
+            : "It's a Tie!";
       } else {
         message = `Player ${nextPlayer}'s Turn`;
       }
@@ -104,7 +101,7 @@ const EnclosureGame = () => {
   return (
     <div className="flex flex-col items-center justify-center p-4">
       <h1 className="text-2xl font-bold mb-4">Enclosure Game</h1>
-      <ScoreDisplay scores={gameState.scores} />
+      <ScoreDisplay className="pb-3" scores={gameState.scores} />
       <GameBoard
         grid={gameState.grid}
         onCellClick={handleCellClick}
