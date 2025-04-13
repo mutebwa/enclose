@@ -1,6 +1,6 @@
 import type { Grid } from "../types/game";
 
-export const GRID_SIZE = 64;
+// export const GRID_SIZE = 64;
 export const PLAYER_COLORS = ["bg-blue-500", "bg-red-500"];
 export const SEALED_COLOR = "bg-gray-700";
 export const EMPTY_COLOR = "bg-gray-200";

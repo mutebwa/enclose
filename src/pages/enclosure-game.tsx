@@ -53,9 +53,9 @@ const EnclosureGame = () => {
 
       const gameOver = checkForGameOver(updatedGrid);
       let nextPlayer = currentPlayer === 1 ? 2 : 1;
-      if (enclosuresFound) {
-        nextPlayer = currentPlayer;
-      }
+      // if (enclosuresFound) {
+      //   nextPlayer = currentPlayer;
+      // }
 
       let message = "";
       if (gameOver) {

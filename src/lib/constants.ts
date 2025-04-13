@@ -1,7 +1,7 @@
 // Game configuration
-export const GRID_SIZE = 64;
+export const GRID_SIZE = 32;
 export const CELL_SIZE = 8; // In pixels
-export const MAX_BOARD_SIZE = 600; // Max width/height in pixels
+export const MAX_BOARD_SIZE = 640; // Max width/height in pixels
 
 // Player configuration
 export const PLAYERS = [
@@ -22,11 +22,11 @@ export const WIN_MESSAGES = {
 };
 
 // Animation constants
-export const RESET_DELAY = 300; // In milliseconds
-export const MESSAGE_ANIMATION_DURATION = 0.3; // In seconds
+export const RESET_DELAY = 700; // In milliseconds
+export const MESSAGE_ANIMATION_DURATION = 0.7; // In seconds
 
-//Design colors
-const RED = '#fc2929'
-const PURPLE = '#c952Ee4'
-const LIGHT_PURPLE = '#ffe7fe'
-const DARK_YELLOW = '#debf11'
+// //Design colors
+// const RED = '#fc2929'
+// const PURPLE = '#c952Ee4'
+// const LIGHT_PURPLE = '#ffe7fe'
+// const DARK_YELLOW = '#debf11'

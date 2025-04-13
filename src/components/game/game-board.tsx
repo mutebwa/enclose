@@ -1,8 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { cn } from "../../lib/utils";
-import { GRID_SIZE, PLAYER_COLORS, SEALED_COLOR, EMPTY_COLOR } from "../../lib/game-utils";
+import { PLAYER_COLORS, SEALED_COLOR, EMPTY_COLOR } from "../../lib/game-utils";
 import { Grid } from '../../types/game';
+import { GRID_SIZE } from '../../lib/constants';
 
 interface GameBoardProps {
   grid: Grid;
